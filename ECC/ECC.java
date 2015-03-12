@@ -1,5 +1,4 @@
 package ECC;
-
 import java.math.BigInteger;
 
 /**
@@ -7,7 +6,7 @@ import java.math.BigInteger;
  */
 public class ECC {
 
-    private static BigInteger TWO = new BigInteger("2");
+    protected static BigInteger TWO = new BigInteger("2");
     protected static BigInteger DREI = new BigInteger("3");
 
     private BigInteger a;
@@ -32,12 +31,18 @@ public class ECC {
         protected Point() {
             this.x = BigInteger.ZERO;
             this.y = BigInteger.ZERO;
-            System.out.println("Point x:" + x.toString(16) + " y:" + y.toString(16));
+            //System.out.println("Point x:" + x.toString(16) + " y:" + y.toString(16));
         }
         protected Point(BigInteger x, BigInteger y) {
             this.x = x;
             this.y = y;
-            System.out.println("Point x:" + x.toString(16) + " y:" + y.toString(16));
+            //System.out.println("Point x:" + x.toString(16) + " y:" + y.toString(16));
+        }
+        public BigInteger getX() {
+            return this.x;
+        }
+        public BigInteger getY() {
+            return this.y;
         }
 
         protected Point add(Point q) {
@@ -46,6 +51,8 @@ public class ECC {
 
             if (this.x.equals(q.x) && this.y.equals(q.y)) {
                 return this.doubled();
+            } else if (q.x.equals(BigInteger.ZERO) && q.y.equals(BigInteger.ZERO)) {
+                return this;
             } else {
                 //x3 = (( ( (y2 - y1) / (x2 - x1) )^2 ) - x1 -x2 ) mod p
                 //y3 = (( ( (y2 - y1) / (x2 - x1) ) * ( x1 - x3 ) ) - y1 ) mod p
@@ -80,12 +87,12 @@ public class ECC {
         }
         protected Point scalar(BigInteger n) {
 
+            Point p = new Point(this.getX(), this.getY());
             Point r = new Point();
-            Point p = new Point(this.x, this.y);
 
             for (int i = 0; i < n.bitLength(); i++) {
                 if (n.testBit(i)) {
-                    r = this.add(r);
+                    r = p.add(r);
                 }
                 p = p.doubled();
             }
@@ -94,7 +101,7 @@ public class ECC {
         protected Boolean verify() {
             // y ^ 2 = (x^3 + ax + b) mod p
             System.out.println(this.y.pow(2).mod(ECC.this.p)) ;
-            System.out.println( ( this.x.pow(3).add( ECC.this.a.multiply(this.x) ).add( ECC.this.b ) ).mod( ECC.this.p) );
+            System.out.println( ( this.x.pow(3).add( ECC.this.a.multiply(this.x) ).add( ECC.this.b ) ) );
             return true;
         }
     }

@@ -1,3 +1,4 @@
+package RSA;
 /**
  * Created by mike on 18.02.15.
  */
@@ -10,9 +11,8 @@ public class RSA {
     private BigInteger d;
     private BigInteger e;
     private BigInteger n;
-    private Boolean SERVER = false;
 
-    private RSA() {
+    public RSA() {
         SecureRandom random = new SecureRandom();
 
         int BITLENGTH = 1024;
@@ -33,34 +33,37 @@ public class RSA {
             System.out.println("d:" + d);
         }
     }
-    private RSA(BigInteger n, BigInteger d) {
+    public RSA(BigInteger n, BigInteger e) {
         this.n = n;
-        this.d = d;
-    }
-    BigInteger encrypt(BigInteger message) {
-           return message.modPow(e, n);
+        this.d = e;
     }
 
-    BigInteger getD() {
-        return this.d;
-    }
-    BigInteger getN() {
-        return  this.n;
-    }
-    String decrypt(BigInteger encrypted) {
-        return new String((encrypted.modPow(d, n)).toByteArray());
+    public RSA(String n, String e) {
+        this.n = new BigInteger(n);
+        this.e = new BigInteger(e);
     }
 
-    public static void main(String[] args) {
-        RSA key = new RSA();
-
-        String s = "test";
-        BigInteger message = new BigInteger(s.getBytes());
-        BigInteger encrypt = key.encrypt(message);
-
-        String decrypt = key.decrypt(encrypt);
-
-        //System.out.println("encrypted message= " + new String(encrypt.toByteArray()));
-        System.out.println("decrypted message= " + decrypt);
+    public BigInteger getE() {
+        return this.e;
     }
+    public BigInteger getN() {
+        return this.n;
+    }
+
+    public String decrypt(BigInteger encrypted) {
+        return new String((encrypted.modPow(this.d, this.n)).toByteArray());
+    }
+
+    public BigInteger sign(BigInteger message) {
+        return message.modPow(this.d, this.n);
+    }
+
+    public BigInteger encrypt(BigInteger message) {
+        return message.modPow(this.e, this.n);
+    }
+
+    public BigInteger verify(BigInteger signature) {
+        return signature.modPow(this.e, this.n);
+    }
+
 }
