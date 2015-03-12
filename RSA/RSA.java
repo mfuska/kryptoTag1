@@ -35,7 +35,7 @@ public class RSA {
     }
     public RSA(BigInteger n, BigInteger e) {
         this.n = n;
-        this.d = e;
+        this.e = e;
     }
 
     public RSA(String n, String e) {
@@ -49,6 +49,10 @@ public class RSA {
     public BigInteger getN() {
         return this.n;
     }
+    /*public BigInteger[] getPublicKey() {
+        BigInteger array[] = {this.n, this.e};
+        return array;
+    }*/
 
     public String decrypt(BigInteger encrypted) {
         return new String((encrypted.modPow(this.d, this.n)).toByteArray());

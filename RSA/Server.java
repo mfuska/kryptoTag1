@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
+import java.security.MessageDigest;
 import java.util.Scanner;
 
 public class Server {
@@ -43,16 +44,28 @@ class ServerThread implements Runnable {
         try {
             try {
                 RSA rsa = new RSA();
+                SHA256 sha2 = new SHA256();
+
                 InputStream in_Stream = socket.getInputStream();
                 OutputStream out_Stream = socket.getOutputStream();
 
                 Scanner in_Scanner = new Scanner(in_Stream);
                 PrintWriter out = new PrintWriter(out_Stream, true);
-
                 out.println(rsa.getN());
                 out.println(rsa.getE());
-                BigInteger encrytedMsg = new BigInteger(in_Scanner.nextLine());
-                System.out.println("Client:" + anzahlClient + ": " + rsa.decrypt(encrytedMsg) );
+
+                BigInteger encrytedMsg = in_Scanner.nextBigInteger();
+                String message[] = rsa.decrypt(encrytedMsg).split(",");
+                String hash =  sha2.hex2String( sha2.calculateHash(message[0]) );
+                if (hash.equals(message[1])) {
+                    System.out.println("Hash Wert ist equal");
+                    System.out.println("message:" + message[0]);
+                    System.out.println("hash:" + hash + " == sha2:" + message[1]);
+                } else {
+                    System.out.print("Hash Wert ist nicht gleich");
+                    System.out.println("message:" + message[0]);
+                    System.out.println("hash:" + hash + " =! sha2:" + message[1]);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
