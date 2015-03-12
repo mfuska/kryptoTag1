@@ -5,9 +5,9 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.*;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 // openssl req -newkey rsa:2048 -nodes -keyout domain.key -x509 -days 365 -out domain.crt -sha256
 public class CertX509v3 {
@@ -16,12 +16,14 @@ public class CertX509v3 {
             FileInputStream fileInput = new FileInputStream(filename);
 
             CertificateFactory certFact = CertificateFactory.getInstance("X.509");
-            Certificate cert = certFact.generateCertificate(fileInput);
+            X509Certificate cert = (X509Certificate) certFact.generateCertificate(fileInput);
 
             System.out.println(cert.toString());
             System.out.println(cert.getPublicKey().toString());
 
             try {
+                cert.checkValidity();
+                System.out.println("cert ist valid");
                 cert.verify(cert.getPublicKey());
                 System.out.println("cert verify with public key ok");
             } catch (NoSuchProviderException e) {
