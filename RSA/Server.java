@@ -1,3 +1,4 @@
+package RSA;
 /**
  * Created by mike on 18.02.15.
  */
@@ -6,10 +7,7 @@ import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
-//import java.security.cert.*;
 import java.util.Scanner;
-import RSA.*;
-
 
 public class Server {
     private static final int PORT = 5013;
@@ -36,16 +34,15 @@ class ServerThread implements Runnable {
     private Socket socket;
 
     private int anzahlClient;
-    private RSA rsa;
 
     public ServerThread(Socket s, int i) {
-        rsa = new RSA();
         socket = s;
         anzahlClient = i;
     }
     public void run() {
         try {
             try {
+                RSA rsa = new RSA();
                 InputStream in_Stream = socket.getInputStream();
                 OutputStream out_Stream = socket.getOutputStream();
 

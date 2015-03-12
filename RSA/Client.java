@@ -1,3 +1,5 @@
+package RSA;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -6,9 +8,6 @@ import java.math.BigInteger;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-
-import RSA.*;
-
 
 /**
  * Created by mike on 18.02.15.
