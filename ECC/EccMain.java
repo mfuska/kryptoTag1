@@ -20,7 +20,7 @@ public class EccMain {
         BigInteger gY = new BigInteger("bd376388b5f723fb4c22dfe6cd4375a05a07476444d5819985007e34", 16);
 
         ECC.Point basisP = ecc.newPoint(gX, gY);
-        ECC.Point x = basisP.scalar(ecc.DREI);
-        System.out.println( x.verify());
+        ECC.Point x = basisP.scalar(ECC.DREI);
+        System.out.println(x.verify());
     }
 }
