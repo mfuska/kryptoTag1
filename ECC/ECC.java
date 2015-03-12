@@ -100,9 +100,9 @@ public class ECC {
         }
         protected Boolean verify() {
             // y ^ 2 = (x^3 + ax + b) mod p
-            System.out.println(this.y.pow(2).mod(ECC.this.p)) ;
-            System.out.println( ( this.x.pow(3).add( ECC.this.a.multiply(this.x) ).add( ECC.this.b ) ) );
-            return true;
+            BigInteger tmp =  y.pow(2).mod(ECC.this.p);
+            BigInteger tmp1 = ( this.x.pow(3).add( ECC.this.a.multiply(this.x) ).add( ECC.this.b ) ).mod(ECC.this.p) ;
+            return tmp.equals(tmp1);
         }
     }
 }

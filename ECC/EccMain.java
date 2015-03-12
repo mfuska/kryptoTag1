@@ -22,11 +22,30 @@ public class EccMain {
         ECC.Point basisP = ecc.newPoint(gX, gY);
 
         ECC.Point x = basisP.scalar(BigInteger.ONE);
+        if (x.verify()) {
+            System.out.println("x ist auf der Kurve");
+        } else {
+            System.out.println("x ist nicht auf der Kurve");
+        }
         System.out.println(x.getX().toString(16));
         System.out.println(x.getY().toString(16));
 
         ECC.Point y = basisP.scalar(ECC.TWO);
+        if (y.verify()) {
+            System.out.println("y ist auf der Kurve");
+        } else {
+            System.out.println("y ist nicht auf der Kurve");
+        }
         System.out.println(y.getX().toString(16));
         System.out.println(y.getY().toString(16));
+
+        ECC.Point z = basisP.scalar(new BigInteger("26959946667150639794667015087019625940457807714424391721682722368060"));
+        if (z.verify()) {
+            System.out.println("z ist auf der Kurve");
+        } else {
+            System.out.println("z ist nicht auf der Kurve");
+        }
+        System.out.println(z.getX().toString(16));
+        System.out.println(z.getY().toString(16));
     }
 }
