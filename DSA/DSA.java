@@ -1,3 +1,5 @@
+package DSA;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -92,6 +94,7 @@ public class DSA {
         BigInteger s2 = BigInteger.ZERO;
         do {
             s = new BigInteger(this.q.bitLength(), random);
+            //compareTo:  // -1 less than // 0 equal // 1 greater than
             if (s.compareTo(BigInteger.ONE) == 1 && s.compareTo(this.q) == -1) {
                 do {
                     s1 = (this.g.modPow(s, this.p)).mod(this.q);
@@ -129,7 +132,7 @@ public class DSA {
         BigInteger q = publicKey[1];
         BigInteger g = publicKey[2];
         BigInteger y = publicKey[3];
-        // check 1
+        // check 1: 0 < s1 < q  && 0 < s2 < q --> not True sig false
         if ( (s1.compareTo(BigInteger.ZERO) == 1 && s1.compareTo(q) == -1) &&
                 (s2.compareTo(BigInteger.ZERO) == 1 && s2.compareTo(q) == -1) ) {
             BigInteger w = s2.modInverse(q);
