@@ -51,14 +51,14 @@ public class EccMainTest {
 
 
     @Test
-    public void test9() throws Exception {
+    public void test3() throws Exception {
         BigInteger n = new BigInteger("9");
         BigInteger x = new BigInteger("2FDCCCFEE720A77EF6CB3BFBB447F9383117E3DAA4A07E36ED15F78D",16);
         BigInteger y = new BigInteger("371732E4F41BF4F7883035E6A79FCEDC0E196EB07B48171697517463",16);
 
         checkPointsOnCurve(n, x, y);
     }
-    public void test10() throws Exception {
+    public void test4() throws Exception {
         BigInteger n = new BigInteger("13479966930919337728895168462090683249159702977113823384618282123295");
         BigInteger x = new BigInteger("EF353BF5C73CD551B96D596FBC9A67F16D61DD9FE56AF19DE1FBA9CD",16);
         BigInteger y = new BigInteger("21771B9CDCE3E8430C09B3838BE70B48C21E15BC09EE1F2D7945B91F",16);
@@ -66,7 +66,7 @@ public class EccMainTest {
         checkPointsOnCurve(n, x, y);
     }
 
-    public void test11() throws Exception {
+    public void test5() throws Exception {
         BigInteger n = new BigInteger("26959946667150639794667015087019625940457807714424391721682722368060");
         BigInteger x = new BigInteger("B70E0CBD6BB4BF7F321390B94A03C1D356C21122343280D6115C1D21",16);
         BigInteger y = new BigInteger("42C89C774A08DC04B3DD201932BC8A5EA5F8B89BBB2A7E667AFF81CD",16);
@@ -79,5 +79,6 @@ public class EccMainTest {
 
         assertEquals(erX, result.getX());
         assertEquals(erY, result.getY());
+        assertEquals(Boolean.TRUE , result.verify());
     }
 }
