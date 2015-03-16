@@ -13,7 +13,7 @@ import java.security.cert.X509Certificate;
 // openssl req -newkey rsa:2048 -nodes -keyout domain.key -x509 -days 365 -out domain.crt -sha256
 public class CertX509v3 {
         public static void main(String[] args) throws CertificateException, IOException {
-            String filename = "/Users/mike/domain.crt";
+            String filename = "/Users/mike/kryptoProto/UE1/src/Cert/domain.crt";
             FileInputStream fileInput = new FileInputStream(filename);
 
             CertificateFactory certFact = CertificateFactory.getInstance("X.509");
