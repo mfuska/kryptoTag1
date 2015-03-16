@@ -7,7 +7,6 @@ import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
-import java.security.MessageDigest;
 import java.util.Scanner;
 
 public class Server {

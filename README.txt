@@ -4,11 +4,11 @@ RSA
 //2. RSA Schlüssel Generierung
 //3. Austausch privateKey (Server sendet private Key to Client)
 //4. Hashen (SHA-2) eines Textes
-//5. Client RSA verschlüsseln message(Test, h(text))
+//5. Client RSA verschlüsseln message(text, h(text))
 //6. Server RSA entschlüsseln und check Hashwert
 javac RSA/*.java
 java RSA/Server //startet den Server
-java RSA/Client //startet den  Client
+java RSA/Client //startet den Client
 
 ECC
 //Curve Werte P224
@@ -33,7 +33,7 @@ javac DSA/DSA.java
 java DSA/DSA
 
 Cert
-// Cert Generierinun: openssl req -newkey rsa:2048 -nodes -keyout domain.key -x509 -days 365 -out domain.crt -sha256
+// Cert generieren und signieren (Root Cert): openssl req -newkey rsa:2048 -nodes -keyout domain.key -x509 -days 365 -out domain.crt -sha256
 // self signed Cert
 // implementiert:
 // 1. einlesen eines Certs
