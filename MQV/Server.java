@@ -17,11 +17,12 @@ public class Server {
         ServerSocket s_Socket = null;
         try {
             s_Socket = new ServerSocket(PORT);
+            MQV mqv = new MQV();
 
             int i = 1;
             while (true) {
                 Socket s_incoming = s_Socket.accept();
-                Runnable r = new ServerThread(s_incoming, i);
+                Runnable r = new ServerThread(s_incoming, i, mqv);
                 Thread t = new Thread(r);
                 t.start();
                 i++;
@@ -40,19 +41,20 @@ public class Server {
 
 class ServerThread implements Runnable {
     private Socket socket;
+    private MQV mqv;
 
-    private int anzahlClient;
 
-    public ServerThread(Socket s, int i) {
-        socket = s;
-        anzahlClient = i;
+    public ServerThread(Socket s, int i, MQV mqv) {
+        this.socket = s;
+        this.anzahlClient = i;
+        this.mqv = mqv;
+
     }
     public void run() {
         try {
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
                 //MQV wird initialisiert
-                MQV mqv = new MQV();
                 // Server get public Key from CLient
                 mqv.setForeign_public_key((ECC.Point) ois.readObject());
                 System.out.println("Server get foreigen key x:" + mqv.getForeign_public_key().getX() + " y:" + mqv.getForeign_public_key().getY());

@@ -7,21 +7,22 @@ import java.security.SecureRandom;
  * Created by mike on 19.03.15.
  */
 public class MQV {
-    private BigInteger private_key;
     private BigInteger S;
     private ECC ecc;
 
-    private ECC.Point publicKey;
+    private BigInteger Q_private_key;
+    private ECC.Point  Q_publicKey;
+
     private ECC.Point foreign_public_key;
     private ECC.Point senmetric_key;
 
     public MQV() {
         SecureRandom random = new SecureRandom();
-        this.private_key = new BigInteger(160, random);
+        this.Q_private_key = new BigInteger(160, random);
         this.ecc = new ECC();
         // X Server
         // Y Client
-        this.publicKey = ecc.getBasePoint().scalar(this.private_key);
+        this.Q_publicKey = ecc.getBasePoint().scalar(this.Q_private_key);
     }
     private BigInteger firstLBits(BigInteger x) {
           //  (int) Math.ceil((double)divident / divisor);
