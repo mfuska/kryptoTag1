@@ -10,19 +10,56 @@ public class MQV {
     private BigInteger S;
     private ECC ecc;
 
-    private BigInteger Q_private_key;
-    private ECC.Point  Q_publicKey;
+    private BigInteger q; //  private Key
+    private ECC.Point Q; // public Key
 
-    private ECC.Point foreign_public_key;
-    private ECC.Point senmetric_key;
+    private BigInteger k; //  private Key
+    private ECC.Point R; // public Key
+
+    private ECC.Point Q_public; //foreign public Key
+    private ECC.Point R_public; //foreign public Key
+
+    private ECC.Point Z;
+
 
     public MQV() {
+    }
+    protected void setQ(ECC.Point Q) {
+        this.Q = Q;
+        System.out.println("Q x:" + this.Q.getX() + " y:" + this.Q.getY());
+    }
+    protected void setq(BigInteger q) {
+        this.q = q;
+        System.out.println("q:" + this.q);
+    }
+    protected void setECC(ECC ecc) {
+        this.ecc = ecc;
+    }
+    protected void setQ_public(ECC.Point Q_public) {
+        this.Q_public = Q_public;
+        System.out.println("Q_public x:" + this.Q_public.getX() + " y:" + this.Q_public.getY());
+    }
+    protected void setR_public(ECC.Point R_public) {
+        this.R_public = R_public;
+        System.out.println("R_public x:" + this.R_public.getX() + " y:" + this.R_public.getY());
+    }
+    protected ECC.Point getR_public() {
+        return R_public;
+    }
+    protected ECC.Point getQ_public() {
+        return Q_public;
+    }
+    protected ECC.Point getR() {
+        return R;
+    }
+    protected ECC.Point getQ() {
+        return Q;
+    }
+    protected void generate2Key() {
         SecureRandom random = new SecureRandom();
-        this.Q_private_key = new BigInteger(160, random);
-        this.ecc = new ECC();
-        // X Server
-        // Y Client
-        this.Q_publicKey = ecc.getBasePoint().scalar(this.Q_private_key);
+        this.k = new BigInteger(160, random);
+        this.R = ecc.getBasePoint().scalar(this.k);
+        this.calculateS();
     }
     private BigInteger firstLBits(BigInteger x) {
           //  (int) Math.ceil((double)divident / divisor);
@@ -32,70 +69,24 @@ public class MQV {
         BigInteger tmp = ECC.TWO.pow(L);
         return (x.mod(  tmp   ) ).add( tmp );
     }
-    private void calculateServer_S() {
-        // Sa = x + X' * a
+    private void calculateS() {
+        // S = k + R' * q
         //this.S = this.private_key.add(ecc.getA().multiply(this.firstLBits(this.getPublicKey().getX())));
-        BigInteger Xstrich = this.firstLBits(this.publicKey.getX());
-        BigInteger term2 = ecc.getA().multiply(Xstrich);
-        this.S = this.private_key.add(term2);
-
+        BigInteger Rstrich = this.firstLBits(this.R.getX());
+        BigInteger term2 = this.q.multiply(Rstrich);
+        this.S = this.k.add(term2);
     }
-    private void calculateClient_S() {
-        // Sb = y + Y' * b
-        //this.S = this.private_key.add(ecc.getB().multiply(this.firstLBits(this.getPublicKey().getX())));
-        BigInteger Ystrich = this.firstLBits(this.publicKey.getX());
-        BigInteger term2 = ecc.getB().multiply(Ystrich);
-        this.S = this.private_key.add(term2);
-    }
-    protected void setForeign_public_key(ECC.Point point) {
-        this.foreign_public_key = point;
-    }
-    protected ECC.Point getForeign_public_key() {
-        return this.foreign_public_key;
-    }
-    protected void generateClientKey() {
-        this.calculateClient_S();
-        // K = h * Sb * (X + X' * A)
+    protected void generateSemmetricKey() {
+        // Z = h * S * (R_public + R_public' * Q_public)
         // X' = firstLBits(Xx)
-        BigInteger Xstrich = this.firstLBits(this.foreign_public_key.getX());
-        // A = a * Basepoint
-        ECC.Point A = ecc.getBasePoint().scalar(ecc.getA());
-        //point  = X' * A
-        ECC.Point point = A.scalar(Xstrich);
-        // point1 = X + point
-        ECC.Point point1 = this.foreign_public_key.add(point);
+        BigInteger Rstrich = this.firstLBits(this.R_public.getX());
+        //point  = R' * Q_public
+        ECC.Point point = Q_public.scalar(Rstrich);
+        // point1 = R_public + point
+        ECC.Point point1 = this.R_public.add(point);
         // semmetric_key = H * Sb * point1
-        this.senmetric_key = (point1.scalar(this.S)).scalar(this.ecc.getH());
-        System.out.println("A" + A.verify());
-        System.out.println("point" + point.verify());
-        System.out.println("point1" + point1.verify());
-        System.out.println("senmetricy key" + senmetric_key.verify());
-    }
-    protected void generateServerKey() {
-        this.calculateServer_S();
-        // K = h * Sa * (Y + Y' * B)
-        // Y' = firstLBits(Yx)
-        BigInteger Ystrich = this.firstLBits(this.foreign_public_key.getX());
-        // B = b * Basepoint
-        ECC.Point B = ecc.getBasePoint().scalar(ecc.getB());
-        //point  = Y' * B
-        ECC.Point point = B.scalar(Ystrich);
-        // point1 = Y + point
-        ECC.Point point1 = this.foreign_public_key.add(point);
-        // semmetric_key = H * Sa * point1
-        this.senmetric_key = (point1.scalar(this.S)).scalar(this.ecc.getH());
-        System.out.println("B" + B.verify());
-        System.out.println("point" + point.verify());
-        System.out.println("point1" + point1.verify());
-        System.out.println("senmetricy key" + senmetric_key.verify());
-    }
-    protected ECC.Point getSemmetric_key() {
-        return this.senmetric_key;
-    }
-    public BigInteger getPrivate_key() {
-        return this.private_key;
-    }
-    public ECC.Point getPublicKey() {
-        return this.publicKey;
+        this.Z = (point1.scalar(this.S)).scalar(this.ecc.getH());
+        System.out.println("semmetric key x:" + this.Z.getX() + " y:" + this.Z.getY());
+        System.out.println("Check:" + this.Z.verify());
     }
 }
