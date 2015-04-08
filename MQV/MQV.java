@@ -9,7 +9,7 @@ import java.security.SecureRandom;
 public class MQV {
     private BigInteger S;
     private ECC ecc;
-
+    //Zertifikat
     private BigInteger q; //  private Key
     private ECC.Point Q; // public Key
 
@@ -40,6 +40,23 @@ public class MQV {
         System.out.println("Q_public x:" + this.Q_public.getX() + " y:" + this.Q_public.getY());
     }
     protected void setR_public(ECC.Point R_public) {
+        //x,y sind nicht unendlich
+        if (R_public.getX().equals(BigInteger.ZERO) || R_public.getY().equals(BigInteger.ZERO) ) {
+            throw new NullPointerException("R ist unendlich");
+        }
+        //x < (p-1) && x >= 0
+        // -1 less than
+        // 0 equals
+        // 1 greather than
+        if ( R_public.getX().compareTo( ecc.getP().subtract(BigInteger.ONE)) == 1 || R_public.getX().compareTo(BigInteger.ZERO) == -1  ) {
+            throw new NullPointerException("X ist nicht im Bereich von Fq");
+        }
+        if ( R_public.getY().compareTo( ecc.getP().subtract(BigInteger.ONE)) == 1 || R_public.getX().compareTo(BigInteger.ZERO) == -1  ) {
+            throw new NullPointerException("X ist nicht im Bereich von Fq");
+        }
+        if (! R_public.verify()) {
+            throw new NullPointerException("Punkt liegt nicht auf der ECC Kurve");
+        }
         this.R_public = R_public;
         System.out.println("R_public x:" + this.R_public.getX() + " y:" + this.R_public.getY());
     }

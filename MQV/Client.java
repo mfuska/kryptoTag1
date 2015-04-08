@@ -25,9 +25,9 @@ public class Client {
 
             //MQV wird initialisiert
             MQV_Client mqv = new MQV_Client();
+            MessageObj msgObj_write = new MessageObj(mqv.getQ(), mqv.getR());
 
-            oos.writeObject(mqv.getQ());
-            oos.writeObject(mqv.getR());
+            oos.writeObject(msgObj_write);
             System.out.println("Qx:" + mqv.getQ().getX() + " y:" + mqv.getQ().getY());
             System.out.println("Rx:" + mqv.getR().getX() + " y:" + mqv.getR().getY());
 

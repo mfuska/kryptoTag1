@@ -5,10 +5,8 @@ package MQV;
 //import java.math.BigInteger.* ;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Server {
     private static final int PORT = 50130;
@@ -56,8 +54,13 @@ class ServerThread implements Runnable {
 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             //Server get public Key from CLient
-            mqv.setQ_public((ECC.Point) ois.readObject());
-            mqv.setR_public((ECC.Point) ois.readObject());
+            //mqv.setQ_public((ECC.Point) ois.readObject());
+            //mqv.setR_public((ECC.Point) ois.readObject());
+            MessageObj msgObj = (MessageObj) ois.readObject();
+            mqv.setQ_public(msgObj.getQ());
+
+            mqv.setR_public(msgObj.getR());
+            // check R
             System.out.println("Client Qx:" + mqv.getQ_public().getX() + " y:" + mqv.getQ_public().getY());
             System.out.println("Client Rx:" + mqv.getR_public().getX() + " y:" + mqv.getR_public().getY());
 
@@ -73,6 +76,8 @@ class ServerThread implements Runnable {
             mqv.generateSemmetricKey();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.getMessage();
         } catch (Exception e) {
             e.printStackTrace();
         }
