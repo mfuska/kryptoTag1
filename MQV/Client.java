@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
@@ -43,23 +44,25 @@ public class Client {
 
             //{k1,k2} <- KDF(Zx);
             mqv.generateSemmetricKey();
-            sha256.calulateKeyPair(mqv.getZ().getX());
+            sha256.calculateKeyPair(mqv.getZ().getX());
 
             // Berechne HASH Wert tb = (2,Qb,Qa,Rb,Ra)
             dsa.setPrivateKey(sha256.getHashKey());
-            dsa.setMessage("2", mqv.getQ(), mqv.getQ_public(), mqv.getR(), mqv.getR_public());
+            dsa.setMessage("2", mqv.getQ().toString(), mqv.getQ_public().toString(), mqv.getR().toString(), mqv.getR_public().toString());
             if ( ! dsa.verify(msgObj_read.getHashWert()) ) {
                 System.err.println("Signatur ist falsch");
             } else {
                 //SEND: Client -- ta = MAC(3,Qa,Qb,Ra,Rb) --> Server
-                dsa.setMessage("3", mqv.getQ_public(), mqv.getQ(), mqv.getR_public(), mqv.getR());
-                oos.writeObject(dsa.sign());
+                dsa.setMessage("3", mqv.getQ_public().toString(), mqv.getQ().toString(), mqv.getR_public().toString(), mqv.getR().toString());
             }
+            oos.writeObject(dsa.sign());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
     }

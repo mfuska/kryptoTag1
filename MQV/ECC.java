@@ -145,8 +145,8 @@ public class ECC implements Serializable {
             // y ^ 2 = (x^3 + ax + b) mod p
             BigInteger tmp =  y.pow(2).mod(ECC.this.p);
             BigInteger tmp1 = ( this.x.pow(3).add( ECC.this.a.multiply(this.x) ).add( ECC.this.b ) ).mod(ECC.this.p) ;
-            if (tmp.equals(tmp1)) System.out.println("true");
-            else System.out.println("false");
+            if (tmp.equals(tmp1)) System.out.println("ECC verify: true");
+            else System.out.println("ECC verify: false");
             return tmp.equals(tmp1);
         }
     }
