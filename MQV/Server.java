@@ -4,10 +4,13 @@ package MQV;
  */
 //import java.math.BigInteger.* ;
 
+import DSA.DSA;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 
 public class Server {
     private static final int PORT = 50130;
@@ -52,30 +55,47 @@ class ServerThread implements Runnable {
     }
     public void run() {
         try {
+            SHA256 sha256 = new SHA256();
+            DSA dsa = new DSA();
 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            //Client -- Qa,Ra --> Server
+            //RECEIVE: Client -- Qa,Ra --> Server
             MessageObj msgObj_read = (MessageObj) ois.readObject();
-            //CHECK PUBLIC KEY FROM CLIENT
+
+            //CHECK: VALIDITY of R --- PUBLIC KEY FROM CLIENT
             mqv.checkValidyR_public(msgObj_read.getR());
-            //SET CERT AND PUBLIC KEY FROM CLIENT
+
+            //SET: CERT AND PUBLIC KEY FROM CLIENT
             mqv.setQ_public(msgObj_read.getQ());
             mqv.setR_public(msgObj_read.getR());
 
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            // Generate private and public Key
+            //CALCULATE: private and public Key SERVER
             mqv.generate2Key();
-            //check tb = MAC(2,Qb,Qa,Rb,Ra)
+            //{k1,k2} <- KDF(Zx);
+            mqv.generateSemmetricKey();
+            sha256.calulateKeyPair(mqv.getZ().getX());
 
-            // Berechne HASH Wert (3,Qa,Qb,Ra,Rb)
-            //Server -- Qb,Rb,tb --> Server
-            MessageObj msgObj_write = new MessageObj(mqv.getQ(),mqv.getR(),new BigInteger("34242"));
+            //CALULATE: HASH Wert tb = (2,Qb,Qa,Rb,Ra)
+            dsa.setPrivateKey(sha256.getHashKey());
+            dsa.setMessage("2", mqv.getQ(), mqv.getQ_public(),mqv.getR(), mqv.getR_public());
+
+            //SEND: Server -- Qb,Rb,tb --> Client
+            MessageObj msgObj_write = new MessageObj(mqv.getQ(),mqv.getR(), dsa.sign());
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(msgObj_write);
 
-            //Client -- ta --> Server
-            String ta = (String) ois.readObject();
-            //check ta = MAC(3,Qa,Qb,Ra,ba)
-            mqv.generateSemmetricKey();
+            //RECEIVE: Client -- ta --> Server
+            BigInteger[] ta = (BigInteger[]) ois.readObject();
+
+            //CHECK: ta = MAC(3,Qa,Qb,Ra,ba)
+            dsa.setMessage("3", mqv.getQ_public(), mqv.getQ(), mqv.getR_public(), mqv.getR())) ) {
+            if (! dsa.verify(ta) {
+                System.err.println("Signatur ist falsch");
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -89,5 +109,3 @@ class ServerThread implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-}

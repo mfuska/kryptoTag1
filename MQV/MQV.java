@@ -70,6 +70,9 @@ public class MQV {
     protected ECC.Point getQ() {
         return Q;
     }
+    protected ECC.Point getZ() {
+        return this.Z;
+    }
     protected void generate2Key() {
         SecureRandom random = new SecureRandom();
         this.k = new BigInteger(160, random);

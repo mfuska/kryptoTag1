@@ -9,23 +9,23 @@ import java.math.BigInteger;
 public class MessageObj implements Serializable {
     private ECC.Point Q;
     private ECC.Point R;
-    private BigInteger hashWert;
+    private BigInteger[] hashWert;
 
 
     public MessageObj(ECC.Point Q, ECC.Point R) {
         this.Q = Q;
         this.R = R;
     }
-    public MessageObj(ECC.Point Q, ECC.Point R, BigInteger hashWert) {
+    public MessageObj(ECC.Point Q, ECC.Point R, BigInteger[] hashWert) {
         this.Q = Q;
         this.R = R;
         this.hashWert = hashWert;
     }
-    public MessageObj(BigInteger hashWert) {
+    public MessageObj(BigInteger[] hashWert) {
         this.hashWert = hashWert;
     }
 
-    public BigInteger getHashWert() {
+    public BigInteger[] getHashWert() {
         return hashWert;
     }
     public ECC.Point getQ() {
