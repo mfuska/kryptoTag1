@@ -25,19 +25,21 @@ public class Client {
 
             //MQV wird initialisiert
             MQV_Client mqv = new MQV_Client();
+            //Client --- Qa,Ra ---> Server
             MessageObj msgObj_write = new MessageObj(mqv.getQ(), mqv.getR());
-
             oos.writeObject(msgObj_write);
-            System.out.println("Qx:" + mqv.getQ().getX() + " y:" + mqv.getQ().getY());
-            System.out.println("Rx:" + mqv.getR().getX() + " y:" + mqv.getR().getY());
 
             //read Server ECC Point
             ObjectInputStream ois = new ObjectInputStream(c_socket.getInputStream());
-            mqv.setQ_public((ECC.Point) ois.readObject());
-            mqv.setR_public((ECC.Point) ois.readObject());
-            System.out.println("Server Qx:" + mqv.getQ_public().getX() + " y:" + mqv.getQ_public().getY());
-            System.out.println("Server Rx:" + mqv.getR_public().getX() + " y:" + mqv.getR_public().getY());
-
+            //Server --- Qb,Rb,tb ---> Client
+            MessageObj msgObj_read = (MessageObj) ois.readObject();
+            mqv.setQ_public(msgObj_read.getQ());
+            mqv.checkValidyR_public(msgObj_read.getR());
+            mqv.setR_public(msgObj_read.getR());
+            //check tb == MAC(2,Qb,Qa,Rb,Ra)
+            //Client -- ta = MAC(3,Qa,Qb,Ra,Rb) --> Server
+            String ta = new String("13131313123");
+            oos.writeObject(ta);
 
             mqv.generateSemmetricKey();
         } catch (UnknownHostException e) {

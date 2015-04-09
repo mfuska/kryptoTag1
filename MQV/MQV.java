@@ -37,17 +37,17 @@ public class MQV {
     }
     protected void setQ_public(ECC.Point Q_public) {
         this.Q_public = Q_public;
-        System.out.println("Q_public x:" + this.Q_public.getX() + " y:" + this.Q_public.getY());
     }
     protected void setR_public(ECC.Point R_public) {
+        this.R_public = R_public;
+    }
+    protected void checkValidyR_public(ECC.Point R_public) {
         //x,y sind nicht unendlich
         if (R_public.getX().equals(BigInteger.ZERO) || R_public.getY().equals(BigInteger.ZERO) ) {
             throw new NullPointerException("R ist unendlich");
         }
         //x < (p-1) && x >= 0
-        // -1 less than
-        // 0 equals
-        // 1 greather than
+        // compareTo: -1 == less than  0 == equals  1 == greather than
         if ( R_public.getX().compareTo( ecc.getP().subtract(BigInteger.ONE)) == 1 || R_public.getX().compareTo(BigInteger.ZERO) == -1  ) {
             throw new NullPointerException("X ist nicht im Bereich von Fq");
         }
@@ -57,8 +57,6 @@ public class MQV {
         if (! R_public.verify()) {
             throw new NullPointerException("Punkt liegt nicht auf der ECC Kurve");
         }
-        this.R_public = R_public;
-        System.out.println("R_public x:" + this.R_public.getX() + " y:" + this.R_public.getY());
     }
     protected ECC.Point getR_public() {
         return R_public;

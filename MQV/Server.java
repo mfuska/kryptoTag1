@@ -5,6 +5,7 @@ package MQV;
 //import java.math.BigInteger.* ;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -53,33 +54,40 @@ class ServerThread implements Runnable {
         try {
 
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            //Server get public Key from CLient
-            //mqv.setQ_public((ECC.Point) ois.readObject());
-            //mqv.setR_public((ECC.Point) ois.readObject());
-            MessageObj msgObj = (MessageObj) ois.readObject();
-            mqv.setQ_public(msgObj.getQ());
-
-            mqv.setR_public(msgObj.getR());
-            // check R
-            System.out.println("Client Qx:" + mqv.getQ_public().getX() + " y:" + mqv.getQ_public().getY());
-            System.out.println("Client Rx:" + mqv.getR_public().getX() + " y:" + mqv.getR_public().getY());
+            //Client -- Qa,Ra --> Server
+            MessageObj msgObj_read = (MessageObj) ois.readObject();
+            //CHECK PUBLIC KEY FROM CLIENT
+            mqv.checkValidyR_public(msgObj_read.getR());
+            //SET CERT AND PUBLIC KEY FROM CLIENT
+            mqv.setQ_public(msgObj_read.getQ());
+            mqv.setR_public(msgObj_read.getR());
 
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            // Generate private and public Key
             mqv.generate2Key();
-            oos.writeObject(mqv.getQ());
-            oos.writeObject(mqv.getR());
+            //check tb = MAC(2,Qb,Qa,Rb,Ra)
 
-            System.out.println("Qx:" + mqv.getQ().getX() + " y:" + mqv.getQ().getY());
-            System.out.println("Rx:" + mqv.getR().getX() + " y:" + mqv.getR().getY());
+            // Berechne HASH Wert (3,Qa,Qb,Ra,Rb)
+            //Server -- Qb,Rb,tb --> Server
+            MessageObj msgObj_write = new MessageObj(mqv.getQ(),mqv.getR(),new BigInteger("34242"));
+            oos.writeObject(msgObj_write);
 
-
+            //Client -- ta --> Server
+            String ta = (String) ois.readObject();
+            //check ta = MAC(3,Qa,Qb,Ra,ba)
             mqv.generateSemmetricKey();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.getMessage();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                this.socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
