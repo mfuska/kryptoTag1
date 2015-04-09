@@ -75,9 +75,10 @@ class ServerThread implements Runnable {
 
             //CALULATE: HASH Wert tb = (2,Qb,Qa,Rb,Ra)
             dsa.setPrivateKey(sha256.getHashKey());
-            dsa.setMessage("2", mqv.getQ().toString(), mqv.getQ_public().toString(), mqv.getR().toString(), mqv.getR_public().toString());
+            dsa.setMessage("2", mqv.getQ().getX().toString(), mqv.getQ_public().getX().toString(), mqv.getR().getX().toString(), mqv.getR_public().getX().toString());
 
             //SEND: Server -- Qb,Rb,tb --> Client
+            System.out.println("SERVER (2,Qb,Qa,Rb,Ra)");
             MessageObj msgObj_write = new MessageObj(mqv.getQ(), mqv.getR(), dsa.sign());
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(msgObj_write);
@@ -86,11 +87,12 @@ class ServerThread implements Runnable {
             BigInteger[] ta = (BigInteger[]) ois.readObject();
 
             //CHECK: ta = MAC(3,Qa,Qb,Ra,ba)
-            dsa.setMessage("3", mqv.getQ_public().toString(), mqv.getQ().toString(), mqv.getR_public().toString(), mqv.getR().toString());
-            if (!dsa.verify(ta)) {
-                System.err.println("Signatur ist falsch");
+            System.out.println("SERVER (3,Qa,Qb,Ra,Rb)");
+            dsa.setMessage("3", mqv.getQ_public().getX().toString(), mqv.getQ().getX().toString(), mqv.getR_public().getX().toString(), mqv.getR().getX().toString());
+            if (dsa.verify(ta)) {
+                System.err.println("Signatur ist richtig");
             } else {
-                System.out.println("Signatur ist richtig");
+                System.out.println("Signatur ist falsch");
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

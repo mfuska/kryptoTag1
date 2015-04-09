@@ -40,7 +40,10 @@ public class SHA256 {
     }
     private void KDF(String hashValue) {
         String k1 = hashValue.substring(0,hashValue.length()/2);
+        //String k1 = "1356831522889923769543046806526144294004356527265419708150170860856577691387213140872722233721259259027104889941247329184501283390885295596643375392829829";
         String k2 = hashValue.substring(hashValue.length()/2,(hashValue.length()-1));
+        System.out.println("k1:" + k1);
+        System.out.println("k2:" + k2);
         this.strArray = new String[] {k1, k2};
     }
     protected String[] getKeyPair() {

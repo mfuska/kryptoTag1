@@ -48,13 +48,16 @@ public class Client {
 
             // Berechne HASH Wert tb = (2,Qb,Qa,Rb,Ra)
             dsa.setPrivateKey(sha256.getHashKey());
-            dsa.setMessage("2", mqv.getQ().toString(), mqv.getQ_public().toString(), mqv.getR().toString(), mqv.getR_public().toString());
-            if ( ! dsa.verify(msgObj_read.getHashWert()) ) {
-                System.err.println("Signatur ist falsch");
-            } else {
+            System.out.println("Client (2,Qb,Qa,Rb,Ra)");
+            dsa.setMessage("2", mqv.getQ_public().getX().toString(), mqv.getQ().getX().toString(), mqv.getR_public().getX().toString(), mqv.getR().getX().toString());
+            if ( dsa.verify(msgObj_read.getHashWert()) ) {
+                System.err.println("Signatur ist true");
                 //SEND: Client -- ta = MAC(3,Qa,Qb,Ra,Rb) --> Server
-                dsa.setMessage("3", mqv.getQ_public().toString(), mqv.getQ().toString(), mqv.getR_public().toString(), mqv.getR().toString());
+                dsa.setMessage("3", mqv.getQ().getX().toString(), mqv.getQ_public().getX().toString(), mqv.getR().getX().toString(), mqv.getR_public().getX().toString());
+            } else {
+                System.err.println("Signatur ist false");
             }
+            System.out.println("Client (3,Qa,Qb,Ra,Rb)");
             oos.writeObject(dsa.sign());
         } catch (UnknownHostException e) {
             e.printStackTrace();

@@ -12,7 +12,6 @@ import java.security.SecureRandom;
 public class DSA {
     private BigInteger p;  // length L (p = 1 mod q) p = kq + 1
     private BigInteger q;  // length 160 (q teilt p-1)
-    //private BigInteger h;  // 1 < h < p-1 und (h ^ (p-1/q) mod p) != 1
     private BigInteger g;  // == h ^ (p-1/q) mod p
     private BigInteger x;  // 1 < x < q
     private BigInteger y;  // 1 < y < q
@@ -25,26 +24,28 @@ public class DSA {
     // p,q,g,y veroeffentlicht
     // x geheimer schluessel
 
-
     public DSA() {
         this.m = new String();
         this.initDSA();
     }
 
     private void initDSA(){
-
-        this.p = new BigInteger("13368566116231306037753538667530794234070322008103834359916472098579949466335308811083106456468528616528934653914585390214751316132736733292434587083074973");
-        this.q = new BigInteger("1058041536992883176168589017564102759170726601011");
-        this.g = new BigInteger("4065538879919081344892522714009301371109641606765011481813708499044101940541468364776997558143717102226898683951822286932267966396959001853309045202737397");
-        this.y = new BigInteger("7345708114268162505390765315538857990129990315565204085483387026439469147183314431119351935434514617270714043730068664910346831924016426664376909243283346");
-        //this.h = new BigInteger("h:636049788692830196229800425974387688720309131500983590655095967538490623861171084795531944402618819388784342650503934387411754572399682122560562499598947");
+        this.p = new BigInteger("10393954077751214712499992780393199730031677231586309600049430943184888618160796113546515144759488157243203345348864934082041936783128349761732911530115149");
+        this.q = new BigInteger("1157957959370050296211761000590584685845216338317");
+        this.g = new BigInteger("4684289672848615558873935953266635411681311883478488045613882682100910591652849969973475805471524137342135214690620342668630077489775258912010033677983266");
 
     }
+    private void generateY() {
+        //y = g ^ x mod p
+        this.y = this.g.modPow(this.x, this.p);
+    }
+
     protected void setMessage(String number, String Q1, String Q2, String R1, String R2) {
-        this.m.concat(number).concat(Q1).concat(Q2).concat(R1).concat(R2);
+        this.m = number + Q1 + Q2 + R1 + R2;
     }
     protected void setPrivateKey(String privateKey) {
         this.x = new BigInteger(privateKey,16);
+        this.generateY();
     }
     protected BigInteger[] sign() throws NoSuchAlgorithmException {
         /*
@@ -53,7 +54,7 @@ public class DSA {
             s2 = s^-1 (SHA(m) + s1 . x) mod q -->  s2 = 0  s1 new calculate
          */
         MessageDigest sha2= MessageDigest.getInstance("SHA-256");
-        BigInteger msg2sha2 = new BigInteger(sha2.digest(m.getBytes()));
+        BigInteger msg2sha2 = new BigInteger(sha2.digest(this.m.getBytes()));
 
         SecureRandom random = new SecureRandom();
         BigInteger s;
@@ -71,6 +72,10 @@ public class DSA {
         } while ( s2.compareTo(BigInteger.ZERO) == 0 );
 
         BigInteger[] signature = {s1, s2};
+        System.out.println("DSA sign s1:" + s1.toString() + "---------------");
+        System.out.println("DSA sign s2:" + s2.toString() + "----------------");
+        System.out.println("DSA sign m:" + this.m + "---------------------");
+        System.out.println("DSA sign x:" + this.x.toString() + "--------------");
         return signature;
     }
 
@@ -90,10 +95,11 @@ public class DSA {
          */
 
         MessageDigest sha2= MessageDigest.getInstance("SHA-256");
-        BigInteger sha2hash = new BigInteger(sha2.digest(m.getBytes()));
+        BigInteger sha2hash = new BigInteger(sha2.digest(this.m.getBytes()));
 
         BigInteger s1 = signatur[0];
         BigInteger s2 = signatur[1];
+
 
         // check 1: 0 < s1 < q  && 0 < s2 < q --> not True sig false
         if ( (s1.compareTo(BigInteger.ZERO) == 1 && s1.compareTo(this.q) == -1) &&
@@ -101,7 +107,12 @@ public class DSA {
             BigInteger w = s2.modInverse(this.q);
             BigInteger u1 = sha2hash.multiply(w).mod(this.q);
             BigInteger u2 = s1.multiply(w).mod(this.q);
-            BigInteger v = g.modPow(u1, this.p).multiply(y.modPow(u2, this.p)).mod(this.p).mod(this.q);
+            BigInteger v = this.g.modPow(u1, this.p).multiply(this.y.modPow(u2, this.p)).mod(this.p).mod(this.q);
+            System.out.println("DSA verify s1:" + s1.toString() + "-------------");
+            System.out.println("DSA verify s2:" + s2.toString() + "-----------------");
+            System.out.println("DSA verify m:" + this.m + "----------------");
+            System.out.println("DSA verify x:" + this.x.toString() + "-----------------");
+            System.out.println("v:" + v.toString() + " == s1:" + s1.toString());
             return v.compareTo(s1) == 0;
         }
         return false;
