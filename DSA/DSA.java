@@ -23,12 +23,30 @@ public class DSA {
     // geheimer schluessel
 
     private DSA() {
+        /*
         SecureRandom random = new SecureRandom();
         this.q = BigInteger.probablePrime(160, random);
         this.generateP(random);
         this.generateG(random);
         this.generateX(random);
         this.generateY();
+        */
+        this.initDSA();
+
+    }
+    private void initDSA(){
+        this.x = new BigInteger("1356831522889923769543046806526144294004356527265419708150170860856577691387213140872722233721259259027104889941247329184501283390885295596643375392829829");
+        this.y = new BigInteger("244096639084876556694016204343139064990040676028997328554206426805380585987242869587004401744736419481508335211904773253752325619242979543066978175645799");
+        this.p = new BigInteger("10393954077751214712499992780393199730031677231586309600049430943184888618160796113546515144759488157243203345348864934082041936783128349761732911530115149");
+        this.q = new BigInteger("1157957959370050296211761000590584685845216338317");
+        this.g = new BigInteger("4684289672848615558873935953266635411681311883478488045613882682100910591652849969973475805471524137342135214690620342668630077489775258912010033677983266");
+
+        //this.p = new BigInteger("13368566116231306037753538667530794234070322008103834359916472098579949466335308811083106456468528616528934653914585390214751316132736733292434587083074973");
+        //this.q = new BigInteger("1058041536992883176168589017564102759170726601011");
+        //this.g = new BigInteger("4065538879919081344892522714009301371109641606765011481813708499044101940541468364776997558143717102226898683951822286932267966396959001853309045202737397");
+        //this.y = new BigInteger("7345708114268162505390765315538857990129990315565204085483387026439469147183314431119351935434514617270714043730068664910346831924016426664376909243283346");
+
+
     }
     private void generateY() {
         //y = g ^ x mod p
@@ -49,6 +67,7 @@ public class DSA {
                 this.g = h.modPow(pow, this.p);
             }
         } while ( (this.g.compareTo(BigInteger.ONE) == 0 ) && (this.g.compareTo(BigInteger.ONE) == 1) );
+
         if (debug) {
             System.out.println("h:" + h);
             System.out.println("h.bitLength:" + h.bitLength());
@@ -56,6 +75,7 @@ public class DSA {
             System.out.println("g.bitLength:" + g.bitLength());
         }
     }
+
 
     private void generateP(SecureRandom random) {
         int steps = 0;
@@ -104,6 +124,10 @@ public class DSA {
         } while ( s2.compareTo(BigInteger.ZERO) == 0 );
 
         BigInteger[] signature = {s1, s2};
+        System.out.println("DSA sign s1:" + s1.toString() );
+        System.out.println("DSA sign s2:" + s2.toString() );
+        System.out.println("DSA sign m:" + m);
+        System.out.println("DSA sign x:" + this.x.toString());
         return signature;
     }
 
@@ -139,6 +163,12 @@ public class DSA {
             BigInteger u1 = sha2hash.multiply(w).mod(q);
             BigInteger u2 = s1.multiply(w).mod(q);
             BigInteger v = g.modPow(u1, p).multiply(y.modPow(u2, p)).mod(p).mod(q);
+            System.out.println("DSA verify s1:" + s1.toString() + "----------");
+            System.out.println("DSA verify s2:" + s2.toString() + "------------");
+            System.out.println("DSA verify m:" + m + "-------------");
+            System.out.println("DSA verify x:" + this.x.toString() + "------------");
+
+            System.out.println("v:" + v.toString() + " == s1:" + s1.toString());
             return v.compareTo(s1) == 0;
         }
         return false;
