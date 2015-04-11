@@ -24,10 +24,10 @@ public class ECC implements Serializable {
 
 
     public ECC() {
-        this.init();
+        this.init_256();
     }
 
-    private void init() {
+    private void init_192() {
         this.p = new BigInteger("6277101735386680763835789423207666416083908700390324961279");
         this.r = new BigInteger("6277101735386680763835789423176059013767194773182842284081");
         this.a = new BigInteger("-3");
@@ -37,6 +37,17 @@ public class ECC implements Serializable {
         this.Gy = new BigInteger("07192b95ffc8da78631011ed6b24cdd573f977a11e794811", 16);
         this.basePoint = this.newPoint(Gx, Gy);
     }
+    private void init_256() {
+        this.p = new BigInteger("115792089210356248762697446949407573530086143415290314195533631308867097853951");
+        this.r = new BigInteger("115792089210356248762697446949407573529996955224135760342422259061068512044369");
+        this.a = new BigInteger("-3");
+        this.b = new BigInteger("5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b",16);
+        this.h = new BigInteger("3");
+        this.Gx = new BigInteger("6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296", 16);
+        this.Gy = new BigInteger("4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5", 16);
+        this.basePoint = this.newPoint(Gx, Gy);
+    }
+
 
     protected ECC.Point newPoint(BigInteger x, BigInteger y) {
         return new ECC.Point(x, y);

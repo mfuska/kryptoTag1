@@ -15,11 +15,9 @@ public class DSA {
     private BigInteger g;  // == h ^ (p-1/q) mod p
     private BigInteger x;  // 1 < x < q
     private BigInteger y;  // 1 < y < q
-    private int BITLENGTH = 512;
 
     private String m;
 
-    private Boolean debug = false;
     // bereche y = g^x mod p
     // p,q,g,y veroeffentlicht
     // x geheimer schluessel
