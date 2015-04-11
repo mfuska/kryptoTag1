@@ -41,21 +41,21 @@ public class MQV {
     protected void setR_public(ECC.Point R_public) {
         this.R_public = R_public;
     }
-    protected void checkValidyR_public(ECC.Point R_public) {
+    protected void checkValidyR_public(ECC.Point R_public) throws MQVException {
         //x,y sind nicht unendlich
         if (R_public.getX().equals(BigInteger.ZERO) || R_public.getY().equals(BigInteger.ZERO) ) {
-            throw new NullPointerException("R ist unendlich");
+            throw new MQVException("ECC checkValidyR_public ERROR: R is infinite");
         }
         //x < (p-1) && x >= 0
         // compareTo: -1 == less than  0 == equals  1 == greather than
         if ( R_public.getX().compareTo( ecc.getP().subtract(BigInteger.ONE)) == 1 || R_public.getX().compareTo(BigInteger.ZERO) == -1  ) {
-            throw new NullPointerException("X ist nicht im Bereich von Fq");
+            throw new MQVException("ECC checkValidyR_public ERROR: Rx is not the order of Fq");
         }
         if ( R_public.getY().compareTo( ecc.getP().subtract(BigInteger.ONE)) == 1 || R_public.getX().compareTo(BigInteger.ZERO) == -1  ) {
-            throw new NullPointerException("X ist nicht im Bereich von Fq");
+            throw new MQVException("ECC checkValidyR_public ERROR: Ry is not the order of Fq");
         }
         if (! R_public.verify()) {
-            throw new NullPointerException("Punkt liegt nicht auf der ECC Kurve");
+            throw new MQVException("ECC checkValidyR_public ERROR: R is not a Point of ECC Curve");
         }
     }
     protected ECC.Point getR_public() {

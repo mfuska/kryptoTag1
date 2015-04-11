@@ -24,6 +24,7 @@ public class ECC implements Serializable {
 
 
     public ECC() {
+        //this.init_192();
         this.init_256();
     }
 

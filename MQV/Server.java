@@ -42,11 +42,11 @@ public class Server {
 class ServerThread implements Runnable {
     private Socket socket;
     private MQV mqv;
-    private int anzahlClient;
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
 
     public ServerThread(Socket s, int i, MQV mqv) {
         this.socket = s;
-        this.anzahlClient = i;
         this.mqv = mqv;
 
     }
@@ -56,7 +56,7 @@ class ServerThread implements Runnable {
             SHA256 sha256 = new SHA256();
             DSA dsa = new DSA();
 
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            this.ois = new ObjectInputStream(socket.getInputStream());
             //RECEIVE: Client -- Qa,Ra --> Server
             MessageObj msgObj_read = (MessageObj) ois.readObject();
 
@@ -80,8 +80,8 @@ class ServerThread implements Runnable {
             //SEND: Server -- Qb,Rb,tb --> Client
             System.out.println("SERVER (2,Qb,Qa,Rb,Ra)");
             MessageObj msgObj_write = new MessageObj(mqv.getQ(), mqv.getR(), dsa.sign());
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(msgObj_write);
+            this.oos = new ObjectOutputStream(socket.getOutputStream());
+            this.oos.writeObject(msgObj_write);
 
             //RECEIVE: Client -- ta --> Server
             BigInteger[] ta = (BigInteger[]) ois.readObject();
@@ -89,11 +89,11 @@ class ServerThread implements Runnable {
             //CHECK: ta = MAC(3,Qa,Qb,Ra,ba)
             System.out.println("SERVER (3,Qa,Qb,Ra,Rb)");
             dsa.setMessage("3", mqv.getQ_public().getX().toString(), mqv.getQ().getX().toString(), mqv.getR_public().getX().toString(), mqv.getR().getX().toString());
-            if (dsa.verify(ta)) {
-                System.err.println("Signatur ist richtig");
-            } else {
-                System.out.println("Signatur ist falsch");
+            if (!dsa.verify(ta)) {
+                throw new MQVException("SERVER DSA SIG(ta = MAC(3,Qa,Qb,Ra,ba)) VERIFY WRONG");
             }
+        }catch (MQVException e) {
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -107,6 +107,9 @@ class ServerThread implements Runnable {
         } finally {
             try {
                 this.socket.close();
+                this.ois.close();
+                this.oos.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
