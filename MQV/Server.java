@@ -49,7 +49,7 @@ class ServerThread implements Runnable {
     public ServerThread(Socket s, int i, MQV mqv) {
         this.socket = s;
         this.mqv = mqv;
-
+        this.countClient = i;
     }
 
     public void run() {
