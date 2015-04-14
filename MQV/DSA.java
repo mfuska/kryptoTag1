@@ -70,10 +70,6 @@ public class DSA {
         } while ( s2.compareTo(BigInteger.ZERO) == 0 );
 
         BigInteger[] signature = {s1, s2};
-        System.out.println("DSA sign s1:" + s1.toString() + "---------------");
-        System.out.println("DSA sign s2:" + s2.toString() + "----------------");
-        System.out.println("DSA sign m:" + this.m + "---------------------");
-        System.out.println("DSA sign x:" + this.x.toString() + "--------------");
         return signature;
     }
 
@@ -106,11 +102,6 @@ public class DSA {
             BigInteger u1 = sha2hash.multiply(w).mod(this.q);
             BigInteger u2 = s1.multiply(w).mod(this.q);
             BigInteger v = this.g.modPow(u1, this.p).multiply(this.y.modPow(u2, this.p)).mod(this.p).mod(this.q);
-            System.out.println("DSA verify s1:" + s1.toString() + "-------------");
-            System.out.println("DSA verify s2:" + s2.toString() + "-----------------");
-            System.out.println("DSA verify m:" + this.m + "----------------");
-            System.out.println("DSA verify x:" + this.x.toString() + "-----------------");
-            System.out.println("v:" + v.toString() + " == s1:" + s1.toString());
             return v.compareTo(s1) == 0;
         }
         return false;

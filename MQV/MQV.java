@@ -26,11 +26,9 @@ public class MQV {
     }
     protected void setQ(ECC.Point Q) {
         this.Q = Q;
-        System.out.println("Q x:" + this.Q.getX() + " y:" + this.Q.getY());
     }
     protected void setq(BigInteger q) {
         this.q = q;
-        System.out.println("q:" + this.q);
     }
     protected void setECC(ECC ecc) {
         this.ecc = ecc;
@@ -104,7 +102,5 @@ public class MQV {
         ECC.Point point1 = this.R_public.add(point);
         // semmetric_key = H * Sb * point1
         this.Z = (point1.scalar(this.S)).scalar(this.ecc.getH());
-        System.out.println("semmetric key x:" + this.Z.getX() + " y:" + this.Z.getY());
-        System.out.println("Check:" + this.Z.verify());
     }
 }

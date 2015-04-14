@@ -45,6 +45,7 @@ public class ECC implements Serializable {
         this.b = new BigInteger("5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b",16);
         this.h = new BigInteger("3");
         this.Gx = new BigInteger("6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296", 16);
+
         this.Gy = new BigInteger("4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5", 16);
         this.basePoint = this.newPoint(Gx, Gy);
     }
@@ -86,12 +87,10 @@ public class ECC implements Serializable {
         protected Point() {
             this.x = BigInteger.ZERO;
             this.y = BigInteger.ZERO;
-            //System.out.println("Point x:" + x.toString(16) + " y:" + y.toString(16));
         }
         protected Point(BigInteger x, BigInteger y) {
             this.x = x;
             this.y = y;
-            //System.out.println("Point x:" + x.toString(16) + " y:" + y.toString(16));
         }
         public BigInteger getX() {
             return this.x;
@@ -157,8 +156,6 @@ public class ECC implements Serializable {
             // y ^ 2 = (x^3 + ax + b) mod p
             BigInteger tmp =  y.pow(2).mod(ECC.this.p);
             BigInteger tmp1 = ( this.x.pow(3).add( ECC.this.a.multiply(this.x) ).add( ECC.this.b ) ).mod(ECC.this.p) ;
-            if (tmp.equals(tmp1)) System.out.println("ECC verify: true");
-            else System.out.println("ECC verify: false");
             return tmp.equals(tmp1);
         }
     }
