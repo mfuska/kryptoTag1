@@ -29,6 +29,7 @@ public class Client {
             c_socket = new Socket(HOST, PORT);
 
             //INIT: MQV
+            long timeStart = System.currentTimeMillis();
             MQV_Client mqv = new MQV_Client();
 
             //SEND: Client --- Qa,Ra ---> Server
@@ -66,6 +67,8 @@ public class Client {
                 throw new MQVException("CLIENT verify sig(2,Qb,Qa,Rb,Ra): STATUS NOT OK");
             }
             System.out.println("CLIENT verify sig(2,Qb,Qa,Rb,Ra): STATUS OK");
+            long timeEnde = System.currentTimeMillis();
+            System.out.println("time client:" + (timeEnde - timeStart));
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {

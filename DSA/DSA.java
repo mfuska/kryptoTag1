@@ -15,7 +15,7 @@ public class DSA {
     private BigInteger g;  // == h ^ (p-1/q) mod p
     private BigInteger x;  // 1 < x < q
     private BigInteger y;  // 1 < y < q
-    private int BITLENGTH = 512;
+    private int BITLENGTH = 2048;
 
     private Boolean debug = false;
     // bereche y = g^x mod p
@@ -23,15 +23,15 @@ public class DSA {
     // geheimer schluessel
 
     private DSA() {
-        /*
         SecureRandom random = new SecureRandom();
         this.q = BigInteger.probablePrime(160, random);
         this.generateP(random);
         this.generateG(random);
         this.generateX(random);
         this.generateY();
-        */
+        /*
         this.initDSA();
+        */
 
     }
     private void initDSA(){
@@ -73,6 +73,10 @@ public class DSA {
             System.out.println("h.bitLength:" + h.bitLength());
             System.out.println("g:" + g);
             System.out.println("g.bitLength:" + g.bitLength());
+            System.out.println("p:" + p);
+            System.out.println("p.bitLength:" + p.bitLength());
+            System.out.println("q:" + q);
+            System.out.println("q.bitLength:" + q.bitLength());
         }
     }
 
@@ -124,10 +128,6 @@ public class DSA {
         } while ( s2.compareTo(BigInteger.ZERO) == 0 );
 
         BigInteger[] signature = {s1, s2};
-        System.out.println("DSA sign s1:" + s1.toString() );
-        System.out.println("DSA sign s2:" + s2.toString() );
-        System.out.println("DSA sign m:" + m);
-        System.out.println("DSA sign x:" + this.x.toString());
         return signature;
     }
 
@@ -163,12 +163,7 @@ public class DSA {
             BigInteger u1 = sha2hash.multiply(w).mod(q);
             BigInteger u2 = s1.multiply(w).mod(q);
             BigInteger v = g.modPow(u1, p).multiply(y.modPow(u2, p)).mod(p).mod(q);
-            System.out.println("DSA verify s1:" + s1.toString() + "----------");
-            System.out.println("DSA verify s2:" + s2.toString() + "------------");
-            System.out.println("DSA verify m:" + m + "-------------");
-            System.out.println("DSA verify x:" + this.x.toString() + "------------");
 
-            System.out.println("v:" + v.toString() + " == s1:" + s1.toString());
             return v.compareTo(s1) == 0;
         }
         return false;
