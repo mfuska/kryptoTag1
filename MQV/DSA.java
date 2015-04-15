@@ -18,6 +18,7 @@ public class DSA {
 
     private String m;
     private Boolean debug = false;
+    private String SHA = "SHA-512";
 
     // bereche y = g^x mod p
     // p,q,g,y veroeffentlicht
@@ -56,7 +57,8 @@ public class DSA {
             s1 = (g^s mod p) mod q --> wenn s1 = 0 repeat
             s2 = s^-1 (SHA(m) + s1 . x) mod q -->  s2 = 0  s1 new calculate
          */
-        MessageDigest sha2= MessageDigest.getInstance("SHA-256");
+        //MessageDigest sha2= MessageDigest.getInstance("SHA-256");
+        MessageDigest sha2= MessageDigest.getInstance(this.SHA);
         BigInteger msg2sha2 = new BigInteger(sha2.digest(this.m.getBytes()));
 
         SecureRandom random = new SecureRandom();
@@ -94,7 +96,8 @@ public class DSA {
             if (v == s1) --> sig valid
          */
 
-        MessageDigest sha2= MessageDigest.getInstance("SHA-256");
+        //MessageDigest sha2= MessageDigest.getInstance("SHA-256");
+        MessageDigest sha2= MessageDigest.getInstance(this.SHA);
         BigInteger sha2hash = new BigInteger(sha2.digest(this.m.getBytes()));
 
         BigInteger s1 = signatur[0];

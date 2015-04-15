@@ -93,12 +93,12 @@ class ServerThread implements Runnable {
 
             //CHECK: ta = MAC(3,Qa,Qb,Ra,ba)
             System.out.println("SERVER receive: sig(3,Qa,Qb,Ra,Rb)");
-            System.out.println("SERVER verify sig: sig(3,Qa,Qb,Ra,Rb)");
+            System.out.println("SERVER verify sig(3,Qa,Qb,Ra,Rb)");
             dsa.setMessage("3", mqv.getQ_public().getX().toString(), mqv.getQ().getX().toString(), mqv.getR_public().getX().toString(), mqv.getR().getX().toString());
             if (!dsa.verify(ta)) {
                 throw new MQVException("SERVER verify sig(3,Qa,Qb,Ra,ba): STATUS NOT");
             }
-            System.out.println("SERVER verify sig: sig(3,Qa,Qb,Ra,Rb): STATUS OK");
+            System.out.println("SERVER verify sig(3,Qa,Qb,Ra,Rb): STATUS OK");
         }catch (MQVException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

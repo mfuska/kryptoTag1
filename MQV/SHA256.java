@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 public class SHA256 {
     private String[] strArray;
     private Boolean debug = false;
+    private String SHA = "SHA-512";
 
     public SHA256() {
     }
@@ -23,7 +24,7 @@ public class SHA256 {
     }
     private byte[] calculateHash(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest dig = null;
-        dig = MessageDigest.getInstance("SHA-256");
+        dig = MessageDigest.getInstance(this.SHA);
         dig.reset();
         dig.update(str.getBytes("UTF-8"));
         return dig.digest();
