@@ -15,9 +15,11 @@ public class DSA {
     private BigInteger g;  // == h ^ (p-1/q) mod p
     private BigInteger x;  // 1 < x < q
     private BigInteger y;  // 1 < y < q
-    private int BITLENGTH = 2048;
+    private int BITLENGTH = 4096;
+    //private String SHA = "SHA-512";
+    private String SHA = "SHA-256";
 
-    private Boolean debug = false;
+    private Boolean debug = true;
     // bereche y = g^x mod p
     // p,q,g,y veroeffentlicht
     // geheimer schluessel
@@ -109,7 +111,7 @@ public class DSA {
             s1 = (g^s mod p) mod q --> wenn s1 = 0 repeat
             s2 = s^-1 (SHA(m) + s1 . x) mod q -->  s2 = 0  s1 new calculate
          */
-        MessageDigest sha2= MessageDigest.getInstance("SHA-256");
+        MessageDigest sha2= MessageDigest.getInstance(this.SHA);
         BigInteger msg2sha2 = new BigInteger(sha2.digest(m.getBytes()));
 
         SecureRandom random = new SecureRandom();
@@ -128,6 +130,12 @@ public class DSA {
         } while ( s2.compareTo(BigInteger.ZERO) == 0 );
 
         BigInteger[] signature = {s1, s2};
+        if (this.debug) {
+            System.out.println("s1: " + s1);
+            System.out.println("s2: " + s2);
+            System.out.println("s1.bitlength: " + s1.bitLength());
+            System.out.println("s2.bitlength: " + s2.bitLength());
+        }
         return signature;
     }
 
@@ -146,7 +154,7 @@ public class DSA {
             if (v == s1) --> sig valid
          */
 
-        MessageDigest sha2= MessageDigest.getInstance("SHA-256");
+        MessageDigest sha2= MessageDigest.getInstance(this.SHA);
         BigInteger sha2hash = new BigInteger(sha2.digest(m.getBytes()));
 
         BigInteger s1 = signatur[0];

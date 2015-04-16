@@ -10,7 +10,7 @@ public class MessageObj implements Serializable {
     private ECC.Point Q;
     private ECC.Point R;
     private BigInteger[] hashWert;
-    private Boolean debug = true;
+    private Boolean debug = false;
 
     public MessageObj(ECC.Point Q, ECC.Point R) {
         this.Q = Q;
