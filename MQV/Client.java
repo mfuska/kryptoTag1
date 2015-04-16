@@ -57,18 +57,18 @@ public class Client {
             // Berechne HASH Wert tb = (2,Qb,Qa,Rb,Ra)
             dsa.setPrivateKey(sha256.getHashKey());
             dsa.setMessage("2", mqv.getQ_public().getX().toString(), mqv.getQ().getX().toString(), mqv.getR_public().getX().toString(), mqv.getR().getX().toString());
-            System.out.println("CLIENT verify sig: sig(3,Qa,Qb,Ra,Rb)");
+            System.out.println("CLIENT verify sig(2,Qb,Qa,Rb,Ra)");
             if ( dsa.verify(msgObj_read.getHashWert()) ) {
+                System.out.println("CLIENT verify sig(2,Qb,Qa,Rb,Ra): STATUS OK");
                 //SEND: Client -- ta = MAC(3,Qa,Qb,Ra,Rb) --> Server
                 dsa.setMessage("3", mqv.getQ().getX().toString(), mqv.getQ_public().getX().toString(), mqv.getR().getX().toString(), mqv.getR_public().getX().toString());
                 System.out.println("Client SEND sig(3,Qa,Qb,Ra,Rb)");
                 oos.writeObject(dsa.sign());
+                long timeEnde = System.currentTimeMillis();
+                System.out.println("time client:" + (timeEnde - timeStart));
             } else {
                 throw new MQVException("CLIENT verify sig(2,Qb,Qa,Rb,Ra): STATUS NOT OK");
             }
-            System.out.println("CLIENT verify sig(2,Qb,Qa,Rb,Ra): STATUS OK");
-            long timeEnde = System.currentTimeMillis();
-            System.out.println("time client:" + (timeEnde - timeStart));
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
